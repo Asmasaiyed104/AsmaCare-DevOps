@@ -1,0 +1,37 @@
+backend/target/
+frontend/node_modules/
+frontend/dist/
+.env
+.idea/
+.vscode/
+# Environment / secrets
+.env
+*.env
+.env.*
+
+# Java / Maven
+backend/target/
+*.jar
+
+# React / Node
+frontend/node_modules/
+frontend/dist/
+node_modules/
+
+# Terraform - for later
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.swp
+*.tmp
+*.backup
