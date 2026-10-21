@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   backend:
     runs-on: ubuntu-latest
@@ -25,30 +29,50 @@ jobs:
         working-directory: backend
         run: mvn -B package
 
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build backend Docker image
-        run: docker build -t asmacare-backend:${{github.sha}} ./backend    
-    
+        run: docker build -t ghcr.io/asmasaiyed104/asmacare-backend:${{ github.sha }} ./backend
+
+      - name: Push backend Docker image
+        run: docker push ghcr.io/asmasaiyed104/asmacare-backend:${{ github.sha }}
+
   frontend:
     runs-on: ubuntu-latest
 
     steps:
-     - name: Checkout code
-       uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-     - name: Set up Node.js
-       uses: actions/setup-node@v4
-       with:
-         node-version: '20'
-         cache: npm
-         cache-dependency-path: frontend/package-lock.json
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-     - name: Install dependencies
-       working-directory: frontend
-       run: npm ci 
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
 
-     - name: Build frontend
-       working-directory: frontend
-       run: npm run build     
-     
-     - name: Build frontend Docker image
-       run: docker build -t asmacare-frontend:${{ github.sha }} ./frontend    
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build frontend Docker image
+        run: docker build -t ghcr.io/asmasaiyed104/asmacare-frontend:${{ github.sha }} ./frontend
+
+      - name: Push frontend Docker image
+        run: docker push ghcr.io/asmasaiyed104/asmacare-frontend:${{ github.sha }}
