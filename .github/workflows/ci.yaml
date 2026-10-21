@@ -76,3 +76,17 @@ jobs:
 
       - name: Push frontend Docker image
         run: docker push ghcr.io/asmasaiyed104/asmacare-frontend:${{ github.sha }}
+
+  helm:
+   runs-on: ubuntu-latest
+   needs: [backend, frontend]
+
+   steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Lint Helm chart
+        run: helm lint asmacare-chart         
