@@ -22,7 +22,6 @@ node_modules/
 .terraform/
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
 crash.log
 
 # IDE / OS
