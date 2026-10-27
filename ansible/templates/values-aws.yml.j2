@@ -1,8 +1,17 @@
 backend:
   replicaCount: 1
+  image:
+    repository: ghcr.io/asmasaiyed104/asmacare-backend
+    tag: "{{ image_tag }}"
+
+frontend:
+  replicaCount: 1
+  image:
+    repository: ghcr.io/asmasaiyed104/asmacare-frontend
+    tag: "{{ image_tag }}"
 
 database:
-  host: "{{ rds_endpoint }}"
+  host: "{{ rds_address }}"
   port: 3306
   name: "{{ db_name }}"
   username: "{{ db_username }}"

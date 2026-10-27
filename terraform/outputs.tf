@@ -37,3 +37,7 @@ output "rds_endpoint" {
   description = "AsmaCare RDS MySQL endpoint"
   value       = aws_db_instance.mysql.endpoint
 }
+output "rds_address" {
+  description = "RDS hostname without port"
+  value       = aws_db_instance.mysql.address
+}

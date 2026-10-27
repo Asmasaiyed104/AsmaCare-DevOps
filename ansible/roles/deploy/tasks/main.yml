@@ -1,18 +1,18 @@
 ---
-- name: Read RDS endpoint from Terraform
+- name: Read RDS address from Terraform
   ansible.builtin.command:
-    cmd: terraform output -raw rds_endpoint
+    cmd: terraform output -raw rds_address
     chdir: "{{ terraform_dir }}"
-  register: terraform_rds_endpoint
+  register: terraform_rds_address
   changed_when: false
 
-- name: Save RDS endpoint
+- name: Save RDS address
   ansible.builtin.set_fact:
-    rds_endpoint: "{{ terraform_rds_endpoint.stdout }}"
+    rds_address: "{{ terraform_rds_address.stdout }}"
 
-- name: Show RDS endpoint
+- name: Show RDS address
   ansible.builtin.debug:
-    msg: "RDS endpoint: {{ rds_endpoint }}"
+    msg: "RDS address: {{ rds_address }}"
 
 - name: Create temporary Helm values file
   ansible.builtin.tempfile:

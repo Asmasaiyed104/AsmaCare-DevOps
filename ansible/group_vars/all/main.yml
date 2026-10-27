@@ -11,3 +11,5 @@ helm_release_name: asmacare
 db_name: asmacare
 db_username: "{{ vault_db_username }}"
 db_password: "{{ vault_db_password }}"
+
+image_tag: "f5049d923eb73c8f5732d05d17d4c9f6bceeaf78" 
