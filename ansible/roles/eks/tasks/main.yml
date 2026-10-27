@@ -1,0 +1,49 @@
+---
+- name: Check AWS CLI
+  ansible.builtin.command: aws --version
+  register: aws_version
+  changed_when: false
+
+- name: Show AWS CLI version
+  ansible.builtin.debug:
+    var: aws_version.stdout
+
+- name: Check kubectl
+  ansible.builtin.command: kubectl version --client
+  register: kubectl_version
+  changed_when: false
+
+- name: Check Helm
+  ansible.builtin.command: helm version --short
+  register: helm_version
+  changed_when: false
+
+- name: Read EKS cluster name from Terraform
+  ansible.builtin.command:
+    cmd: terraform output -raw eks_cluster_name
+    chdir: "{{ terraform_dir }}"
+  register: terraform_cluster_name
+  changed_when: false
+
+- name: Save EKS cluster name
+  ansible.builtin.set_fact:
+    eks_cluster_name: "{{ terraform_cluster_name.stdout }}"
+
+- name: Show EKS cluster name
+  ansible.builtin.debug:
+    msg: "EKS cluster: {{ eks_cluster_name }}"
+
+- name: Configure kubectl for EKS
+  ansible.builtin.command:
+    cmd: "aws eks update-kubeconfig --region {{ aws_region }} --name {{ eks_cluster_name }}"
+  register: kubeconfig_result
+  changed_when: "'Updated context' in kubeconfig_result.stderr or 'Added new context' in kubeconfig_result.stderr"
+
+- name: Verify Kubernetes connection
+  ansible.builtin.command: kubectl get nodes
+  register: kubernetes_nodes
+  changed_when: false
+
+- name: Show Kubernetes nodes
+  ansible.builtin.debug:
+    var: kubernetes_nodes.stdout_lines

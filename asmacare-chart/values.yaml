@@ -1,7 +1,7 @@
 backend:
   replicaCount: 1
   image:
-    repository: asmacare-backend
+    repository: ghcr.io/asmasaiyed104/asmacare-backend
     tag: latest
     pullPolicy: IfNotPresent
   service:
@@ -17,13 +17,14 @@ backend:
 frontend:
   replicaCount: 1
   image:
-    repository: asmacare-frontend
+    repository: ghcr.io/asmasaiyed104/asmacare-frontend
     tag: latest
     pullPolicy: IfNotPresent
   service:
     port: 80
 
 mysql:
+  enabled: true
   image:
     repository: mysql
     tag: "8.4"
@@ -44,3 +45,10 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 50
+
+database:
+  host: mysql
+  port: 3306
+  name: asmacare
+  username: asmacare
+  password: CHANGE_ME  

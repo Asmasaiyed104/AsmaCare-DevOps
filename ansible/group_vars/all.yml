@@ -1,0 +1,13 @@
+---
+project_name: AsmaCare
+aws_region: ca-central-1
+
+terraform_dir: ../terraform
+helm_chart_dir: ../asmacare-chart
+
+k8s_namespace: asmacare
+helm_release_name: asmacare
+
+db_name: asmacare
+db_username: "{{ vault_db_username }}"
+db_password: "{{ vault_db_password }}"

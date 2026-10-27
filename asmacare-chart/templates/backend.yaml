@@ -55,8 +55,7 @@ spec:
 
           env:
             - name: DB_URL
-              value: "jdbc:mysql://mysql:3306/{{ .Values.mysql.database }}?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false"
-
+              value: "jdbc:mysql://{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?allowPublicKeyRetrieval=true&useSSL=false"
             - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:

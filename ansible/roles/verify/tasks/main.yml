@@ -1,0 +1,20 @@
+---
+- name: Check AsmaCare pods
+  ansible.builtin.command:
+    cmd: kubectl get pods -n {{ k8s_namespace }}
+  register: asmacare_pods
+  changed_when: false
+
+- name: Show AsmaCare pods
+  ansible.builtin.debug:
+    var: asmacare_pods.stdout_lines
+
+- name: Check AsmaCare services
+  ansible.builtin.command:
+    cmd: kubectl get services -n {{ k8s_namespace }}
+  register: asmacare_services
+  changed_when: false
+
+- name: Show AsmaCare services
+  ansible.builtin.debug:
+    var: asmacare_services.stdout_lines

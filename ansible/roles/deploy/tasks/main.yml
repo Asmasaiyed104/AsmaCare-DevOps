@@ -1,0 +1,65 @@
+---
+- name: Read RDS endpoint from Terraform
+  ansible.builtin.command:
+    cmd: terraform output -raw rds_endpoint
+    chdir: "{{ terraform_dir }}"
+  register: terraform_rds_endpoint
+  changed_when: false
+
+- name: Save RDS endpoint
+  ansible.builtin.set_fact:
+    rds_endpoint: "{{ terraform_rds_endpoint.stdout }}"
+
+- name: Show RDS endpoint
+  ansible.builtin.debug:
+    msg: "RDS endpoint: {{ rds_endpoint }}"
+
+- name: Create temporary Helm values file
+  ansible.builtin.tempfile:
+    state: file
+    suffix: .yml
+  register: helm_values_file
+
+- name: Render AWS Helm values from Jinja2
+  ansible.builtin.template:
+    src: values-aws.yml.j2
+    dest: "{{ helm_values_file.path }}"
+    mode: "0600"
+
+- name: Deploy AsmaCare with Helm
+  block:
+    - name: Install or upgrade AsmaCare
+      ansible.builtin.command:
+        cmd: >
+          helm upgrade --install {{ helm_release_name }}
+          {{ helm_chart_dir }}
+          --namespace {{ k8s_namespace }}
+          --create-namespace
+          -f {{ helm_values_file.path }}
+      register: helm_deploy
+
+    - name: Show Helm deployment result
+      ansible.builtin.debug:
+        var: helm_deploy.stdout_lines
+
+  rescue:
+    - name: Show deployment failure message
+      ansible.builtin.debug:
+        msg: "AsmaCare Helm deployment failed."
+
+    - name: Show Kubernetes pods for troubleshooting
+      ansible.builtin.command:
+        cmd: kubectl get pods -n {{ k8s_namespace }}
+      register: failed_pods
+      changed_when: false
+      failed_when: false
+
+    - name: Show failed deployment pods
+      ansible.builtin.debug:
+        var: failed_pods.stdout_lines
+
+  always:
+    - name: Remove temporary Helm values file
+      ansible.builtin.file:
+        path: "{{ helm_values_file.path }}"
+        state: absent      

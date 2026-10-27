@@ -1,0 +1,12 @@
+backend:
+  replicaCount: 1
+
+database:
+  host: "{{ rds_endpoint }}"
+  port: 3306
+  name: "{{ db_name }}"
+  username: "{{ db_username }}"
+  password: "{{ db_password }}"
+
+mysql:
+  enabled: false
